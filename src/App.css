@@ -2,6 +2,18 @@
   text-align: center;
 }
 
+.App input {
+  padding: 10px;
+}
+
+.App button {
+  padding: 10px;
+}
+
+.App input[type="file"] {
+  padding: 10px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +47,19 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.todo-container .todo-item{
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  align-items: center;
+  list-style: none;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #dfdfdf;
+
+}
+
+.todo-item li {
+  padding: 20px;
 }

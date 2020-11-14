@@ -7,7 +7,7 @@ import config from "./aws-exports";
 
 import * as todoService from "./service/todo";
 
-const initialTodoData = { name: "", description: "" };
+const initialTodoData = { name: "", description: "", image: null };
 
 Amplify.configure(config);
 
@@ -40,9 +40,9 @@ class Todo extends React.Component {
   onImageUpload = async (e) => {
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
-    const fileUploadRes = await todoService.upload(file);
-    console.log(fileUploadRes);
-    this.setFormData({ ...this.state.formData, image: file.name });
+    const fileName = todoService.getFileName(file);
+    await todoService.upload(file, fileName);
+    this.setFormData({ ...this.state.formData, image: fileName });
     await todoService.fetchTodos();
   };
 
@@ -58,8 +58,8 @@ class Todo extends React.Component {
     if (!formData.name || !formData.description) return;
     try {
       await todoService.createTodo(formData);
-      if(formData.image) {
-        const image = await todoService.fetchImage(formData.image)
+      if (formData.image) {
+        const image = await todoService.fetchImage(formData.image);
         formData.image = image;
       }
       this.setTodos([...todos, formData]);
@@ -114,7 +114,7 @@ function TodoUi(props) {
   }
   return (
     <div className="App">
-      <h1>Todo App</h1>
+      <h2>Demo Todo App</h2>
       <input
         name="name"
         placeholder="Todo title"
@@ -130,20 +130,24 @@ function TodoUi(props) {
       ></input>
       <input type="file" onChange={onImageUpload} />
       <button onClick={createTodo}>Create Todo</button>
-      <div>
+      <div className="todo-container">
         {todos.map((todo, index) => (
-          <div key={`${todo.id}-${todo.name}-${index}`}>
-            <h2>{todo.name}</h2>
-            <p>{todo.description}</p>
-            <button onClick={() => deleteTodo(todo.id)}>Delete Todo</button>
+          <ul class="todo-item" key={`${todo.id}-${todo.name}-${index}`}>
+            <li>{todo.name}</li>
+            <li>{todo.description}</li>
             {todo.image && (
-              <img
-                alt={`${todo.name}`}
-                src={todo.image}
-                style={{ width: 400 }}
-              />
+              <li>
+                <img
+                  alt={`${todo.name}`}
+                  src={todo.image}
+                  style={{ width: 200 }}
+                />
+              </li>
             )}
-          </div>
+            <li>
+              <button onClick={() => deleteTodo(todo.id)}>Delete Todo</button>
+            </li>
+          </ul>
         ))}
       </div>
     </div>
@@ -153,8 +157,8 @@ function TodoUi(props) {
 function App() {
   return (
     <div className="App">
-      <Todo />
       <AmplifySignOut />
+      <Todo />
     </div>
   );
 }

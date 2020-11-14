@@ -44,6 +44,6 @@ export function getFileName(file) {
   return `${Date.now()}-${file.name || ""}-app`;
 }
 
-export async function upload(file) {
-  return Storage.put(getFileName(file), file);
+export async function upload(file, fileName='') {
+  return Storage.put(fileName, file);
 }
